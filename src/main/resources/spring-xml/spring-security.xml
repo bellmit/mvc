@@ -1,0 +1,127 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+    <http auto-config="true" entry-point-ref="formAuthenticationEntryPoint"
+          access-decision-manager-ref="accessDecisionManager"
+          access-denied-page="${authentication-failure-url}">
+
+        <intercept-url pattern="${login-page-url}" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+
+        <!-- 自定义过滤器配置 -->
+        <custom-filter ref="filterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR"/>
+        <custom-filter ref="logoutFilter" before="LOGOUT_FILTER"/>
+
+        <!-- 登录配置 -->
+        <form-login login-page="${login-page-url}" login-processing-url="${login-processing-url}"
+                    always-use-default-target="false"
+                    default-target-url="${default-target-url}"
+                    authentication-failure-url="${authentication-failure-url}"/>
+
+        <!-- 登出配置 -->
+        <logout invalidate-session="true" logout-url="${logout-url}" logout-success-url="${login-page-url}" />
+
+        <session-management>
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="false"/>
+        </session-management>
+    </http>
+
+    <!-- 认证管理器 -->
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider user-service-ref="userDetailsService">
+            <password-encoder hash="md5"/>
+        </authentication-provider>
+    </authentication-manager>
+
+    <!--自动接收AuthenticationEvent信息 -->
+    <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
+
+    <!--配置登录首页-->
+    <beans:bean id="formAuthenticationEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:property name="loginFormUrl" value="${login-page-url}"/>
+        <beans:property name="forceHttps" value="false"/>
+    </beans:bean>
+
+    <!-- 登出配置 -->
+    <beans:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <beans:constructor-arg value="${login-page-url}"/>
+        <beans:constructor-arg>
+            <beans:array>
+                <beans:ref bean="myLogOutHandler"/>
+            </beans:array>
+        </beans:constructor-arg>
+        <beans:property name="filterProcessesUrl" value="${logout-url}"/>
+    </beans:bean>
+
+    <!-- 自定义登出控制 -->
+    <beans:bean id="myLogOutHandler" class="com.thd.base.security.util.MyLogOutHandler"/>
+
+    <!--自定义fileter或者使用springsecurity已经实现的filter去处理所有控制 -->
+    <beans:bean id="filterSecurityInterceptor"
+                class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <!-- 配置访问决策器，决定某个用户具有的角色，是否有足够的权限去访问某个资源     -->
+        <beans:property name="accessDecisionManager" ref="accessDecisionManager"/>
+        <beans:property name="securityMetadataSource" ref="securityMetadataSource"/>
+    </beans:bean>
+
+    <!--访问决策器 -->
+    <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <beans:property name="allowIfAllAbstainDecisions" value="true"/>
+        <beans:property name="decisionVoters">
+            <beans:list>
+                <beans:bean class="org.springframework.security.access.annotation.Jsr250Voter"/>
+                <beans:ref bean="roleVoter"/>
+                <beans:ref bean="authenticatedVoter"/>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+    <!--角色投票器-->
+    <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
+        <beans:property name="rolePrefix" value="ROLE_"/>
+    </beans:bean>
+    <!--认证投票器-->
+    <beans:bean id="authenticatedVoter" class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+
+    <!--从数据库中获取url地址和url对应的判断-->
+    <beans:bean id="securityMetadataSource" class="com.thd.base.security.service.ThdSecurityMetadataSource">
+        <beans:property name="convertUrlToLowercaseBeforeComparison" value="false"/>
+        <beans:property name="useAntPath" value="true"/>
+        <beans:property name="protectAllResource" value="false"/>
+        <beans:property name="userDetailsService" ref="userDetailsService"/>
+    </beans:bean>
+
+    <!-- 用户信息详细 -->
+    <beans:bean id="userDetailsService" parent="baseTransactionProxy">
+        <beans:property name="proxyTargetClass" value="true"/>
+        <beans:property name="target">
+            <beans:bean class="com.thd.base.security.service.ThdUserDetailService">
+            </beans:bean>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean name="baseTransactionProxy" abstract="true"
+                class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <beans:property name="transactionManager">
+            <beans:ref bean="transactionManager"/>
+        </beans:property>
+        <beans:property name="transactionAttributes">
+            <beans:props>
+                <beans:prop key="find*">PROPAGATION_REQUIRED,readOnly</beans:prop>
+                <beans:prop key="*">PROPAGATION_REQUIRED</beans:prop>
+            </beans:props>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="authenticationUtil" class="com.thd.base.security.util.AuthenticationUtil">
+        <beans:property name="accessDecisionManager" ref="accessDecisionManager"/>
+        <beans:property name="filterInvocationSecurityMetadataSource" ref="securityMetadataSource"/>
+    </beans:bean>
+
+</beans:beans>

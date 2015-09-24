@@ -1,0 +1,35 @@
+@CHARSET "UTF-8";
+/*----------------movetree----------------*/
+.movetree-panel{padding: 10px 20px}
+.tbc-movetree{padding-bottom: 20px}
+.move-tree-node{height: 32px;line-height: 32px;border-bottom: 1px dotted #b2b2b2;cursor: pointer;padding-left: 10px;overflow:hidden;}
+.move-tree-node-hover{background-color: #f0f4f7;}
+.move-tree-node-selected{background-color: #c8d5dd;}
+.move-tree-level-0{border: 1px solid #d7dfe4;background: url('images/moveTree/movetree_first_node.png') top left repeat-x transparent}
+.move-tree-space, .move-tree-icon{height: 32px;width: 20px;line-height: 32px;float: left;display: inline;border: 0}
+.move-tree-icon{background: url('images/moveTree/movetree_icon_folder.png') center center no-repeat transparent}
+.move-tree-leaf .move-tree-icon{background: url('images/moveTree/movetree_icon_file.png') center center no-repeat transparent}
+.move-tree-handle{height: 32px;width: 10px;line-height: 32px;float: left;display: inline;border: 0;cursor: pointer;background: url('images/moveTree/movetree_handle_open.png') center center no-repeat transparent}
+.move-tree-node-retracted .move-tree-handle{background: url('images/moveTree/movetree_handle_close.png') center center no-repeat transparent}
+.move-tree-text{height: 32px;font-size: 12px;line-height: 32px;float: left;font-family: "宋体", sans-serif;color: #333;padding-left: 1px;padding-right: 30px}
+.move-tree-leaf .move-tree-handle{visibility: hidden}
+.move-tree-tool{float: left;display: none}
+.move-tree-node-selected .move-tree-tool, .move-tree-node-hover .move-tree-tool{display: inline}
+.move-tree-tool a{font-size: 12px;line-height: 32px;margin-right: 12px;display: inline-block;text-decoration: none}
+.move-tree-tool a:hover{text-decoration: underline;}
+.move-tree-node-first .move-tree-up{display: none;}
+.move-tree-node-last .move-tree-down{display: none;}
+.move-tree-add, .move-tree-delete, .move-tree-edit{color: #0773b7;}
+.move-tree-up, .move-tree-down{color: #666;}
+.move-tree-tool a.move-tree-delete, .move-tree-level-0 .move-tree-edit{display: none;}
+.move-tree-leaf a.move-tree-delete{display: inline-block;}
+.move-tree-level-0 a.move-tree-delete{display: none;}
+.class-manage-movetree .move-tree-level-2 .move-tree-add{display: none;}
+.group-move-tree .move-tree-level-1 .move-tree-add{display: none;}
+.movetree-confirm-msg{padding: 20px;}
+.ems-itempool-manage .move-tree-down,.ems-itempool-manage .move-tree-up{display: none;}
+.ems-itempool-manage .move-tree-level-1 .move-tree-add{display: none;}
+
+/*校验*/
+.verification-panel p{height: 26px;line-height: 26px;padding-left: 25px;background-image: url('images/moveTree/tbc_input_verification_icon.png');background-repeat: no-repeat}
+.input-verification-empty{background-position: 5px 0;color: #555}
