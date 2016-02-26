@@ -42,7 +42,7 @@ public class BaseDao {
         return hibernateTemplate;
     }
 
-    @Autowired
+    @Resource
     private JdbcTemplate jdbcTemplate;
 
     public JdbcTemplate getJdbcTemplate() {
@@ -53,10 +53,11 @@ public class BaseDao {
         dc.setProjection(Projections.countDistinct(countDistinctProjections));
         List list = this.getHibernateTemplate().findByCriteria(dc);
         int result = 0;
-        for (Iterator it = list.iterator(); it.hasNext(); ) {
-            Integer item = Integer.parseInt(it.next() + "");
+        for (Object aList : list) {
+            Integer item = Integer.parseInt(aList + "");
             result += item;
         }
+
         dc.setProjection(null);// 避免对dc.setProjection影响到其它地方
         return result;
     }
