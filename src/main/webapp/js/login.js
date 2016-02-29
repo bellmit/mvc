@@ -8,9 +8,24 @@ $(document).ready(function () {
 var login = {
     submit: function () {
         var loginForm = $('#loginForm');
-        if(!loginForm.form('validate')){
+        if (!loginForm.form('validate')) {
             return;
         }
-        loginForm.submit();
+
+        document.getElementById("checkLoginMsg").innerHTML = '';
+        var checkLoginForm = $('#checkLoginForm');
+        var url = checkLoginForm.attr('action');
+        $.post(url, loginForm.serialize(), function (data) {
+            if (data.success) {
+                if (!loginForm.form('validate')) {
+                    return;
+                }
+
+                document.getElementById("checkLoginMsg").innerHTML = '';
+                loginForm.submit();
+            } else {
+                document.getElementById("checkLoginMsg").innerHTML = data.msg;
+            }
+        });
     }
 };

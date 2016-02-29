@@ -4,14 +4,17 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.thd.base.admin.model.Login;
 import com.thd.base.admin.model.LoginHis;
 import com.thd.base.admin.service.LoginService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.thd.base.security.util.AuthenticationUtil;
@@ -27,6 +30,29 @@ public class LoginController {
     @InitBinder
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));// 去掉空格
+    }
+
+    @RequestMapping("/checkLogin")
+    @ResponseBody
+    public ModelMap checkLogin(Login login) throws Exception {
+        String corpCode = login.getCorpCode();
+
+        ModelMap map = new ModelMap();
+        map.put("success", false);
+        if (!"default".equals(corpCode)) {
+            map.put("msg", "公司不存在!");
+            return map;
+        }
+
+        /*String username = login.getJ_username();
+        if (!"admin".equals(username)) {
+            map.put("msg", "用户不存在!");
+            return map;
+        }*/
+
+        //String password = request.getParameter("j_password");
+        map.put("success", true);
+        return map;
     }
 
     /**

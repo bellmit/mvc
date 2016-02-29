@@ -12,6 +12,11 @@
     <script type="text/javascript" src="${rc.contextPath}/js/login.js"></script>
     <script language="javascript" type="text/javascript">
         $(function () {
+            $('#corpCode').validatebox({
+                missingMessage: "请输入公司编号",
+                required: true
+            });
+
             $('#username').validatebox({
                 missingMessage: "请输入用户名",
                 required: true
@@ -25,11 +30,7 @@
             document.onkeydown = function (e) {
                 var ev = document.all ? window.event : e;
                 if (ev.keyCode == 13) {
-                    var loginForm = $('#loginForm');
-                    if (!loginForm.form('validate')) {
-                        return;
-                    }
-                    loginForm.submit();
+                    login.submit();
                 }
             };
 
@@ -58,8 +59,16 @@
      src="${rc.contextPath}/images/thdbg.jpg" alt="拉登"/>
 
 <div class="m_cont" align="center" width="100%">
+    <form id="checkLoginForm" action="${rc.contextPath}/basic/checkLogin" method="post"></form>
     <form id="loginForm" name="formName" action="${rc.contextPath}/spring_security_login" method="post">
         <table align="center">
+            <span id="checkLoginMsg" style="color: red"></span>
+            <tr>
+                <td>公司:</td>
+                <td><label>
+                    <input id="corpCode" type='text' name='corpCode'/>
+                </label></td>
+            </tr>
             <tr>
                 <td>用户:</td>
                 <td><label>
