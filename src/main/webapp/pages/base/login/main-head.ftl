@@ -1,5 +1,6 @@
 <#assign sec=JspTaglibs["http://www.springframework.org/security/tags"]/>
 <#assign c=JspTaglibs["http://java.sun.com/jsp/jstl/core"]/>
+<#assign secC=JspTaglibs["/WEB-INF/taglib/security.tld"]/>
 <!--标题开始-->
 <div class="head">
 	<span class="l"><img src="${rc.contextPath}/images/head-logo.gif"/></span>
@@ -25,6 +26,15 @@
  					<a class="l_f1" onmouseover="this.className='droplist_cont_l_f1_hover'" onmouseout="this.className='droplist_cont_l_f1'" onclick="" title="投诉调查">投诉调查</a>
  					<a class="l_f1" onmouseover="this.className='droplist_cont_l_f1_hover'" onmouseout="this.className='droplist_cont_l_f1'" onclick="" title="投诉分析">投诉分析</a>
  					</@sec.authorize>
+                    <@sec.authorize ifAllGranted="ROLE_ADMIN,ROLE_/workflow/complaintCase/*">
+                    <a class="l_f1" onmouseover="this.className='droplist_cont_l_f1_hover'" onmouseout="this.className='droplist_cont_l_f1'" onclick="" title="ifAllGranted">ifAllGranted</a>
+                    </@sec.authorize>
+                    <@sec.authorize ifAnyGranted="ROLE_ADMIN,ROLE_/workflow/complaintCase/*">
+                    <a class="l_f1" onmouseover="this.className='droplist_cont_l_f1_hover'" onmouseout="this.className='droplist_cont_l_f1'" onclick="" title="ifAnyGranted">ifAnyGranted</a>
+                    </@sec.authorize>
+                    <@secC.isDisplay url="/workflow/complaintCase/*">
+                    <a class="l_f1" onmouseover="this.className='droplist_cont_l_f1_hover'" onmouseout="this.className='droplist_cont_l_f1'" onclick="" title="自定义标签">自定义标签</a>
+                    </@secC.isDisplay>
  				</div>
  				<div class="droplist_bottom"></div>
  			</div>
