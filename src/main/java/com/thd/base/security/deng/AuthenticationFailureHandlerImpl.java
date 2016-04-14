@@ -1,5 +1,6 @@
 package com.thd.base.security.deng;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.AuthenticationException;
@@ -19,7 +20,12 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         LOG.info("********** AuthenticationFailureHandler **********");
-        request.setAttribute("msg", "公司不存在!");
-        response.sendRedirect(request.getContextPath() + "/basic/login");
+        String requestType = request.getHeader("X-Requested-With");
+        String returnUrl = "/basic/loginFailed";
+        if (StringUtils.isNotBlank(requestType)) {
+            returnUrl = "/basic/ajaxLoginFailed";
+        }
+
+        response.sendRedirect(request.getContextPath() + returnUrl);
     }
 }

@@ -7,8 +7,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.thd.base.admin.model.Login;
 import com.thd.base.admin.model.LoginHis;
 import com.thd.base.admin.service.LoginService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -44,24 +48,12 @@ public class LoginController {
             return map;
         }
 
-        /*String username = login.getJ_username();
-        if (!"admin".equals(username)) {
-            map.put("msg", "用户不存在!");
-            return map;
-        }*/
-
-        //String password = request.getParameter("j_password");
         map.put("success", true);
         return map;
     }
 
     /**
      * 未登录，跳转登录页面
-     *
-     * @param request
-     * @param response
-     * @return ModelAndView
-     * @throws Exception
      */
     @RequestMapping("/login")
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -70,6 +62,16 @@ public class LoginController {
         }
         logger.info("进入【浦发银行投诉管理】登录页面！");
         logger.debug("进入【浦发银行投诉管理】登录页面！");
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (null != context) {
+            Authentication currentUser = context.getAuthentication();
+            if (currentUser != null) {
+                if (StringUtils.isNotBlank(currentUser.getName()) && !"anonymousUser".equals(currentUser.getName())) {
+                    request.getSession().setAttribute("uname", currentUser.getName());
+                }
+            }
+        }
+
         return new ModelAndView("/login");
     }
 
@@ -81,29 +83,32 @@ public class LoginController {
      * @return ModelAndView
      * @throws Exception
      */
-//    @RequestMapping("/loginOut")
-//    public ModelAndView loginOut(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//        loginService.saveLoginHis(LoginHis.LoginType.LOGOUT);
-//        if (logger.isDebugEnabled()) {
-//            logger.debug("登出系统！");
-//        }
-//        return new ModelAndView("/login");
-//    }
+    @RequestMapping("/loginOut")
+    public ModelAndView loginOut(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        loginService.saveLoginHis(LoginHis.LoginType.LOGOUT);
+        if (logger.isDebugEnabled()) {
+            logger.debug("登出系统！");
+        }
+
+        return new ModelAndView("/login");
+    }
 
     /**
      * 登录成功，跳转到菜单页面
-     *
-     * @param request
-     * @param response
-     * @return ModelAndView
-     * @throws Exception
      */
     @RequestMapping("/loginSuccess")
     public ModelAndView loginSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.getSession().setAttribute("uname", AuthenticationUtil.getMyUserDetails().getOperName());
         ModelAndView modelAndView = new ModelAndView("/base/login/main");
         loginService.saveLoginHis(LoginHis.LoginType.LOGIN);
+
         return modelAndView;
+    }
+
+    @ResponseBody
+    @RequestMapping("/ajaxLoginSuccess")
+    public String ajaxLoginSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return "success";
     }
 
     @RequestMapping("/mainHead")
@@ -129,6 +134,12 @@ public class LoginController {
     @RequestMapping("/loginFailed")
     public ModelAndView loginFailed(HttpServletRequest request, HttpServletResponse response) throws Exception {
         return new ModelAndView("/base/exception/exceptionLogin");
+    }
+
+    @ResponseBody
+    @RequestMapping("/ajaxLoginFailed")
+    public String ajaxLoginFailed() {
+        return "error";
     }
 
     /**

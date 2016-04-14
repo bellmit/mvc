@@ -35,9 +35,9 @@
             };
 
             var elements = document.forms[0].elements;
-            for(var i=0;i < elements.length;i++){
+            for (var i = 0; i < elements.length; i++) {
                 var item = elements[i];
-                if(item.type != 'hidden'){
+                if (item.type != 'hidden') {
                     item.focus();
                     return;
                 }
@@ -60,8 +60,17 @@
 
 <div class="m_cont" align="center" width="100%">
     <form id="checkLoginForm" action="${rc.contextPath}/basic/checkLogin" method="post"></form>
+    <form id="ajaxLoginForm" action="${rc.contextPath}" method="post"></form>
     <form id="loginForm" name="formName" action="${rc.contextPath}/spring_security_login" method="post">
+
         <table align="center">
+        <#if uname??>
+            <span class="user_box">
+                欢迎 ${uname!}<a onclick="" href="${rc.contextPath}/spring_security_logout">退出</a>
+            </span>
+        </#if>
+            <a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-ok"
+               onclick="login.ajaxSubmit();">异步登陆</a>
             <span id="checkLoginMsg" style="color: red"></span>
             <tr>
                 <td>公司:</td>

@@ -1,103 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	version="2.5">
+         xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
 
-	<!-- 启动服务器读取的配置文件 -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:spring-xml/*.xml</param-value>
-	</context-param>
+    <!-- 启动服务器读取的配置文件 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring-xml/*.xml</param-value>
+    </context-param>
 
-	<!-- SpringMVC的配置 -->
-	<servlet>
-		<servlet-name>spring</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>classpath:/spring-xml/spring-servlet.xml</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>spring</servlet-name>
-		<!-- 拦截所有URL -->
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
+    <!-- SpringMVC的配置 -->
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:/spring-xml/spring-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <!-- 拦截所有URL -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
-	<listener>
-		<listener-class>
-			org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-	</listener>
-	<!-- 注册Spring的request作用域 -->
-	<!--
-		request request表示该针对每一次HTTP请求都会产生一个新的bean，同时该bean仅在当前HTTP
-		request内有效，配置实例： request、session、global
-		session使用的时候首先要在初始化web的web.xml中做如下配置： 如果你使用的是Servlet
-		2.4及以上的web容器，那么你仅需要在web应用的XML声明文件web.xml中增加下述ContextListener即可：
-	-->
-	<listener>
-		<listener-class>
-			org.springframework.web.context.request.RequestContextListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+    <listener>
+        <listener-class>
+            org.springframework.security.web.session.HttpSessionEventPublisher
+        </listener-class>
+    </listener>
+    <!-- 注册Spring的request作用域 -->
+    <!--
+        request request表示该针对每一次HTTP请求都会产生一个新的bean，同时该bean仅在当前HTTP
+        request内有效，配置实例： request、session、global
+        session使用的时候首先要在初始化web的web.xml中做如下配置： 如果你使用的是Servlet
+        2.4及以上的web容器，那么你仅需要在web应用的XML声明文件web.xml中增加下述ContextListener即可：
+    -->
+    <listener>
+        <listener-class>
+            org.springframework.web.context.request.RequestContextListener
+        </listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
-	<!-- 防乱码过滤器 -->
-	<filter>
-		<filter-name>encodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>encodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <!-- 防乱码过滤器 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-	<!-- springSecurity过滤器 -->
-	<filter>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>springSecurityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <!-- springSecurity过滤器 -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-	<!-- 自定义过滤器Security过滤器 -->
-	<filter>
-		<filter-name>myUserDetailsSetFilter</filter-name>
-		<filter-class>com.thd.base.security.util.ThdUserDetailsFilter</filter-class>
-		<init-param>
-			<!-- MyUserDetailsSetFilter要用到param-name -->
-			<param-name>systemServiceName_1</param-name>
-			<!-- 用户管理Service -->
-			<param-value>systemService</param-value>
-		</init-param>
-		<init-param>
-			<param-name>userService</param-name>
-			<param-value>userService</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>myUserDetailsSetFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-	
-	<jsp-config>
-		<taglib>
-			<taglib-uri>paramSelectorTag</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/showParamSelector.tld</taglib-location>
-		</taglib>
-	</jsp-config>
+    <!-- 自定义过滤器Security过滤器 -->
+    <filter>
+        <filter-name>myUserDetailsSetFilter</filter-name>
+        <filter-class>com.thd.base.security.util.ThdUserDetailsFilter</filter-class>
+        <init-param>
+            <!-- MyUserDetailsSetFilter要用到param-name -->
+            <param-name>systemServiceName_1</param-name>
+            <!-- 用户管理Service -->
+            <param-value>systemService</param-value>
+        </init-param>
+        <init-param>
+            <param-name>userService</param-name>
+            <param-value>userService</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>myUserDetailsSetFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <jsp-config>
+        <taglib>
+            <taglib-uri>paramSelectorTag</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/showParamSelector.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+
+    <session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>
 </web-app>

@@ -1,5 +1,6 @@
 package com.thd.base.security.deng;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
             throws IOException, ServletException {
         LOG.info("********** AuthenticationSuccessHandler **********");
-        response.sendRedirect(request.getContextPath() + "/loginSuccessHandler.jsp");
+        String requestType = request.getHeader("X-Requested-With");
+        String returnUrl = "/basic/loginSuccess";
+        if (StringUtils.isNotBlank(requestType)) {
+            returnUrl = "/basic/ajaxLoginSuccess";
+        }
+
+        response.sendRedirect(request.getContextPath() + returnUrl);
     }
 }
